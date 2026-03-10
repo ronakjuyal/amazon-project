@@ -1,0 +1,79 @@
+import { cart, updateCartItem } from "../../data/cart.js";
+import { deliveryOptions } from "../../data/deliveryOptions.js";
+import { products } from "../../data/products.js";
+import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
+
+export function renderOrderSummary(){
+    let cartListHTML='';
+    cart.forEach((cartItem)=>{
+        let product=products.find(item=>item.id===cartItem.productId);
+        const date=dayjs().add(deliveryOptions.find(option=>option.id===cartItem.deliveryOptionId).deliveryDays,'days').format('dddd, MMMM D');
+        cartListHTML+=`
+            <div class="cart-item-container">
+                <div class="delivery-date">
+                Delivery date: ${date}
+                </div>
+
+                <div class="cart-item-details-grid">
+                <img class="product-image"
+                    src="${product.image}">
+
+                <div class="cart-item-details">
+                    <div class="product-name">
+                    ${product.name}
+                    </div>
+                    <div class="product-price">
+                    ${(product.priceCents/100).toFixed(2)}
+                    </div>
+                    <div class="product-quantity">
+                    <span>
+                        Quantity: <span class="quantity-label">${cartItem.quantity}</span>
+                    </span>
+                    <span class="update-quantity-link link-primary">
+                        Update
+                    </span>
+                    <span class="delete-quantity-link link-primary">
+                        Delete
+                    </span>
+                    </div>
+                </div>
+
+                <div class="delivery-options">
+                    <div class="delivery-options-title">
+                    Choose a delivery option:
+                    </div>
+                    ${renderDeliveryOptions(cartItem.productId,cartItem.deliveryOptionId)}
+                </div>
+                </div>
+            </div>`;
+    });
+    document.querySelector('.js-order-summary').innerHTML=cartListHTML;
+    document.querySelectorAll('.js-delivery-option-input').forEach((option)=>{
+        let {productId,deliveryOptionId}=option.dataset;
+        option.addEventListener('click',()=>{
+            updateCartItem(productId,deliveryOptionId)
+            renderOrderSummary();
+        });
+
+    })
+}
+function renderDeliveryOptions(productId,deliveryOptionId){
+    let optionListHTML='';
+    
+    deliveryOptions.forEach((option)=>{
+        const date=dayjs().add(option.deliveryDays,'days').format('dddd, MMMM D');
+        optionListHTML+=`
+            <div class="delivery-option">
+                <input type="radio" ${deliveryOptionId===option.id?"checked":""} class="delivery-option-input js-delivery-option-input" name="delivery-option-${productId}" data-product-id="${productId}" data-delivery-option-id="${option.id}">
+                <div>
+                    <div class="delivery-option-date">
+                    ${date}
+                    </div>
+                    <div class="delivery-option-price">
+                    ${option.priceCents==0?'FREE ': '$ '+(option.priceCents/100).toFixed(2)+' -'} Shipping
+                    </div>
+                </div>
+            </div>`;
+    });
+    return optionListHTML;
+}
