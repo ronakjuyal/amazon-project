@@ -1,6 +1,8 @@
-import {addToCart, cart} from '../data/cart.js';
+import {addToCart, countCart} from '../data/cart.js';
 import { products } from '../data/products.js';
 
+let count=countCart();
+document.querySelector('.js-cart-quantity').innerHTML=count===0?'':count;
 let productListHTML='';
 products.forEach((product)=>{
     productListHTML+=`
