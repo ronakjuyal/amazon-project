@@ -41,6 +41,12 @@ export function removeFromCart(productId){
     cart.splice(index,1);
     saveCart();
 }
+export function updateCart(productId,newQuantity){
+    const index=cart.findIndex(item=>item.productId===productId);
+    if(cart[index].quantity===0) cart.splice(index,1);
+    else cart[index].quantity=newQuantity;
+    saveCart();
+}
 function saveCart(){
     localStorage.setItem('cart',JSON.stringify(cart));
 }
