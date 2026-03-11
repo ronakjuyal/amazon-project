@@ -31,6 +31,16 @@ export function updateCartItem(productId,deliveryOptionId){
     cartItem.deliveryOptionId=deliveryOptionId;
     saveCart();
 }
+export function countCart(){
+    let count=0;
+    cart.forEach(item=>count+=item.quantity);
+    return count;
+}
+export function removeFromCart(productId){
+    const index=cart.findIndex(item=>item.productId===productId);
+    cart.splice(index,1);
+    saveCart();
+}
 function saveCart(){
     localStorage.setItem('cart',JSON.stringify(cart));
 }

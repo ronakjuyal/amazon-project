@@ -1,7 +1,8 @@
-import { cart, updateCartItem } from "../../data/cart.js";
+import { cart, removeFromCart, updateCartItem } from "../../data/cart.js";
 import { deliveryOptions } from "../../data/deliveryOptions.js";
 import { products } from "../../data/products.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
+import { renderPaymentSummary } from "./paymentSummary.js";
 
 export function renderOrderSummary(){
     let cartListHTML='';
@@ -32,7 +33,7 @@ export function renderOrderSummary(){
                     <span class="update-quantity-link link-primary">
                         Update
                     </span>
-                    <span class="delete-quantity-link link-primary">
+                    <span class="delete-quantity-link link-primary js-delete-quantity-link" data-product-id="${cartItem.productId}">
                         Delete
                     </span>
                     </div>
@@ -53,9 +54,18 @@ export function renderOrderSummary(){
         option.addEventListener('click',()=>{
             updateCartItem(productId,deliveryOptionId)
             renderOrderSummary();
+            renderPaymentSummary();
         });
 
-    })
+    });
+    document.querySelectorAll('.js-delete-quantity-link').forEach((deleteButton)=>{
+        deleteButton.addEventListener('click',()=>{
+            const productId=deleteButton.dataset.productId;
+            removeFromCart(productId);
+            renderOrderSummary();
+            renderPaymentSummary();
+        });
+    });
 }
 function renderDeliveryOptions(productId,deliveryOptionId){
     let optionListHTML='';
