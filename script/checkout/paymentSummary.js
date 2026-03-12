@@ -12,7 +12,7 @@ export function renderPaymentSummary(){
         totalPrice+=quantity * products.find(product=>product.id===item.productId).priceCents;
         totalShipping+=deliveryOptions.find(option=>option.id===item.deliveryOptionId).priceCents;
     });
-    let total=(totalShipping+totalPrice)/100;
+    let total=(Math.round(totalShipping+totalPrice))/100;
     let paymentSummaryHTML=`
           <div class="payment-summary-title">
             Order Summary
@@ -20,12 +20,12 @@ export function renderPaymentSummary(){
 
           <div class="payment-summary-row">
             <div>Items (${totalQuantity}):</div>
-            <div class="payment-summary-money">$${(totalPrice/100).toFixed(2)}</div>
+            <div class="payment-summary-money">$${(Math.round(totalPrice)/100).toFixed(2)}</div>
           </div>
 
           <div class="payment-summary-row">
             <div>Shipping &amp; handling:</div>
-            <div class="payment-summary-money">$${(totalShipping/100).toFixed(2)}</div>
+            <div class="payment-summary-money">$${(Math.round(totalShipping)/100).toFixed(2)}</div>
           </div>
 
           <div class="payment-summary-row subtotal-row">
